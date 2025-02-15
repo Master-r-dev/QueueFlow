@@ -1,0 +1,28 @@
+services:
+  api:
+    build: .
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PROCESS_TYPE=api
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PROCESS_TYPE=worker
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
