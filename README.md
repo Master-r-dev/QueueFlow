@@ -22,7 +22,7 @@ This application demonstrates asynchronous job handling using Bull with Redis, i
 1.  **Clone the Repository & Install Dependencies**
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/Master-r-dev/QueueFlow
     cd QueueFlow
     npm install
     ```
@@ -31,39 +31,56 @@ This application demonstrates asynchronous job handling using Bull with Redis, i
 
     You can set environment variables in a .env file or directly in your Docker Compose file. The app expects:
 
+    ```bash
         REDIS_HOST
         REDIS_PORT
         PORT (for the API server)
         NODE_ENV (for the API server: regulate rate limit, error stack, and client origin)
         CLIENT_ORIGIN (for CORS)
         CLIENT_ORIGIN_TEST (for CORS, NODE_ENV=dev)
+    ```
 
 3.  **Running Locally**
 
     Run (API+Worker) in Production Mode (Build First, Then Run) :
 
+    ```bash
     npm run build
     npm run start
+    ```
 
-    Run (API+Worker) in Development Mode (No Build Step, Faster Tests)
+    Run (API+Worker) in Development Mode (No Build Step, Faster Tests):
+
+    ```bash
     npm run dev
+    ```
 
     Separately:
 
-        Worker process:
-        npm run worker
+    Worker process:
 
-        API process:
-        npm run api
+    ```bash
+    npm run worker
+    ```
+
+    API process:
+
+    ```bash
+    npm run api
+    ```
 
 4.  **Using Docker Compose for build project**
 
+    ```bash
     npm run build
     docker-compose up --build
+    ```
 
 5.  **Running Tests on builded project**
 
+    ```bash
     npm test
+    ```
 
 ---
 
@@ -73,31 +90,38 @@ Send a POST request to /process-ids with a JSON payload containing an array of I
 
 Request:
 
+```json
 {
-"ids": ["x12345bx", "b6b789x0"]
+  "ids": ["x12345bx", "b6b789x0"]
 }
+```
 
 Response:
 
+```json
 {
-"message": "Jobs enqueued",
-"count": 2
+  "message": "Jobs enqueued",
+  "count": 2
 }
+```
 
 Logs:
-worker-1 | Starting Worker  
+
+```bash
+worker-1 | Starting Worker
 api-1 | Starting API server
 worker-1 | 2025-02-16T11:14:10.630Z info: Redis is up and running
 worker-1 | 2025-02-16T11:14:10.640Z info: Subscribed to id-processed (subscribed to 1 channels)
 api-1 | 2025-02-16T11:14:10.930Z info: API listening on port 4000
 api-1 | 2025-02-16T11:14:10.947Z info: Redis is up and running
 api-1 | 2025-02-16T11:14:10.955Z info: Subscribed to id-processed (subscribed to 1 channels)
-worker-1 | 2025-02-16T11:14:26.081Z info: Handled x12345bx  
+worker-1 | 2025-02-16T11:14:26.081Z info: Handled x12345bx
 worker-1 | 2025-02-16T11:14:26.091Z info: Pub/Sub received: Processed id: x12345bx
 api-1 | 2025-02-16T11:14:26.087Z info: Pub/Sub received: Processed id: x12345bx
 worker-1 | 2025-02-16T11:14:26.093Z info: Handled b6b789x0
 api-1 | 2025-02-16T11:14:26.098Z info: Pub/Sub received: Processed id: b6b789x0
 worker-1 | 2025-02-16T11:14:26.104Z info: Pub/Sub received: Processed id: b6b789x0
+```
 
 The server will enqueue each ID as a job. When processed, the worker logs whether the ID was handled from cache or processed for the first time, and a Pub/Sub message is published.
 
@@ -114,7 +138,10 @@ The server will enqueue each ID as a job. When processed, the worker logs whethe
 ## Why startup script?
 
 Note: Make sure to give execution permissions:
+
+```bash
 chmod +x start.sh
+```
 
 In production you may want to run the API server and worker as separate processes (or even separate containers). With startup script one image can run either the API or the worker based on an environment variable. Done for better isolation and scalability.
 
